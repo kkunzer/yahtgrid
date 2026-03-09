@@ -3,25 +3,52 @@ import { render, screen, act, fireEvent, waitFor } from "@testing-library/react"
 
 // Mock framer-motion
 vi.mock("framer-motion", async () => {
-  const { forwardRef, createElement } = await import("react");
+  const { forwardRef, createElement, Fragment } = await import("react");
   return {
     motion: {
       div: forwardRef(function MotionDiv(
-        { children, initial, animate, exit, transition, whileHover, whileTap, ...props }: any,
-        ref: any
+        {
+          children,
+          initial: _initial,
+          animate: _animate,
+          exit: _exit,
+          transition: _transition,
+          whileHover: _whileHover,
+          whileTap: _whileTap,
+          ...props
+        }: import("react").HTMLAttributes<HTMLDivElement> & {
+          initial?: unknown;
+          animate?: unknown;
+          exit?: unknown;
+          transition?: unknown;
+          whileHover?: unknown;
+          whileTap?: unknown;
+        },
+        ref: import("react").ForwardedRef<HTMLDivElement>
       ) {
         return createElement("div", { ...props, ref }, children);
       }),
       span: forwardRef(function MotionSpan(
-        { children, initial, animate, exit, transition, ...props }: any,
-        ref: any
+        {
+          children,
+          initial: _initial,
+          animate: _animate,
+          exit: _exit,
+          transition: _transition,
+          ...props
+        }: import("react").HTMLAttributes<HTMLSpanElement> & {
+          initial?: unknown;
+          animate?: unknown;
+          exit?: unknown;
+          transition?: unknown;
+        },
+        ref: import("react").ForwardedRef<HTMLSpanElement>
       ) {
         return createElement("span", { ...props, ref }, children);
       }),
     },
-    AnimatePresence: function AnimatePresence({ children }: any) {
-      return children;
-    },
+    AnimatePresence: ({ children }: { children: import("react").ReactNode }) =>
+      createElement(Fragment, null, children),
   };
 });
 
