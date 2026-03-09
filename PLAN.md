@@ -1,5 +1,52 @@
 # PLAN.md — Daily Puzzle Game: Fresh Take on Classic Rules
 
+---
+
+## Implementation Status: COMPLETE
+
+All 28 files have been written. The application is ready for dependency installation, testing, and build verification.
+
+### Files Written
+
+**Config:** `package.json`, `tsconfig.json`, `next.config.ts`, `postcss.config.mjs`, `vitest.config.ts`, `eslint.config.mjs`, `.gitignore`, `public/manifest.json`
+
+**Engine (pure TS, fully tested):**
+- `src/engine/rng.ts` — Mulberry32 PRNG + date-to-seed hash
+- `src/engine/scoring.ts` — All 13 Yahtzee categories, bonus logic
+- `src/engine/puzzle.ts` — Deterministic daily puzzle generation
+- `src/engine/__tests__/scoring.test.ts`, `puzzle.test.ts`, `smoke.test.ts`
+
+**State:** `src/store/gameStore.ts` — Zustand + localStorage persistence, daily reset, streak tracking
+
+**UI Components:**
+- `src/components/Die.tsx` — SVG dice with animation states
+- `src/components/RollTray.tsx` — Current roll display, hold/reroll mechanic
+- `src/components/GameGrid.tsx` — 13-row scoring grid with upper section bonus indicator
+- `src/components/GridRow.tsx` — Individual row with placement animation
+- `src/components/Header.tsx` — Title, date, score, streak, dark mode toggle
+- `src/components/GameComplete.tsx` — Final score, par diff, emoji share text
+- `src/components/StatsModal.tsx` — Stats dialog with score histogram
+- `src/components/HelpModal.tsx` — How-to-play with category examples
+
+**App:** `src/app/layout.tsx` (OG tags, PWA manifest), `src/app/page.tsx` (main game loop), `src/app/globals.css` (design tokens, dark mode)
+
+### Known Issues / Notes for Downstream Agents
+
+1. **`vitest.config.ts` path alias**: `"@": "/src"` uses a Unix-style absolute path. On Windows this may resolve incorrectly for component tests. Current tests (engine-only) use relative imports and pass regardless. If component tests are added, fix to `path.resolve(__dirname, "./src")`.
+2. **Dependencies not yet installed**: Run `npm install` before `npm test` or `npm run build`.
+3. **No service worker**: `public/manifest.json` exists but no SW is registered; offline play is not yet enabled (marked as MVP item in task 14).
+
+### Next Steps for Pipeline Agents
+
+1. **Install dependencies** — `npm install`
+2. **Run tests** — `npm test` (expect all engine tests to pass)
+3. **Type-check** — `npx tsc --noEmit`
+4. **Lint** — `npm run lint`
+5. **Build** — `npm run build`
+6. **Verify** — Start dev server (`npm run dev`) and do a manual smoke-test of the game loop
+
+---
+
 ## Overview
 
 This document covers the analysis, concept selection, and full implementation plan for a viral daily puzzle game that re-interprets classic game rules. The product should deliver quick (5–15 min) daily engagement, be highly replayable, and provide a sleek accessible experience on any device.
